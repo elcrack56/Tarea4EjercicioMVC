@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Calculadora de Comisiones{% endblock %}
+
+{% block content %}
+    <div class="grid-container">
+        <div class="card card-left">
+            <h2>Calcular Comisión</h2>
+            <form action="{{ url_for('main.index') }}" method="POST">
+                <div class="form-group">
+                    <label for="vendedor_id">Vendedor:</label>
+                    <select id="vendedor_id" name="vendedor_id" required>
+                        <option value="">Selecciona un vendedor</option>
+                        {% for vendedor in vendedores %}
+                            <option value="{{ vendedor['_id']|str_id }}" {% if selected_vendedor_id == vendedor['_id']|str_id %}selected{% endif %}>{{ vendedor['nombre'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha_inicio">Fecha Inicio:</label>
+                    <input type="date" id="fecha_inicio" name="fecha_inicio" value="{{ fecha_inicio }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha_fin">Fecha Fin:</label>
+                    <input type="date" id="fecha_fin" name="fecha_fin" value="{{ fecha_fin }}" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Generar Informe</button>
+            </form>
+        </div>
+
+        <div class="card card-right">
+            <h2>Resumen de Comisiones</h2>
+            {% if resultados and selected_vendedor_id %}
+                {% set current_vendedor = vendedores | selectattr('_id', 'eq', selected_vendedor_id | objectid ) | list | first %}
+                <div class="results-summary">
+                    <p>Vendedor: <span>{{ current_vendedor['nombre'] if current_vendedor else 'N/A' }}</span></p>
+                    <p>Periodo: <span>{{ fecha_inicio }} - {{ fecha_fin }}</span></p>
+                    <hr>
+                    <p class="result-value big-number">${{ "%.2f"|format(resultados.total_ventas) }}</p>
+                    <p>Total de Ventas: </p>
+                    <p>Total de Transacciones: <span>{{ resultados.total_transacciones }}</span></p>
+                    <p>Porcentaje Aplicado: <span>{{ "%.1f"|format(resultados.porcentaje_comision_aplicado) }}%</span></p>
+                    <p class="result-value highlight">Comisión a Pagar: <span>${{ "%.2f"|format(resultados.comision_a_pagar) }}</span></p>
+                </div>
+            {% else %}
+                <p class="placeholder-text">Selecciona un vendedor y un período para ver el resumen.</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
