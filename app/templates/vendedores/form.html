@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{% if vendedor %}Editar Vendedor{% else %}Añadir Vendedor{% endif %}{% endblock %}
+
+{% block content %}
+    <div class="crud-container">
+        <h1>{% if vendedor %}Editar Vendedor{% else %}Añadir Nuevo Vendedor{% endif %}</h1>
+        <form action="{% if vendedor %}{{ url_for('main.edit_vendedor', id=vendedor['_id']|str_id) }}{% else %}{{ url_for('main.new_vendedor') }}{% endif %}" method="POST" class="crud-form">
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" value="{{ vendedor['nombre'] if vendedor else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="{{ vendedor['email'] if vendedor else '' }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">{% if vendedor %}Actualizar{% else %}Guardar{% endif %}</button>
+            <a href="{{ url_for('main.list_vendedores') }}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Vendedores{% endblock %}
+
+{% block content %}
+    <div class="crud-container">
+        <h1>Vendedores</h1>
+        <a href="{{ url_for('main.new_vendedor') }}" class="btn btn-success">Añadir Nuevo Vendedor</a>
+        <table class="crud-table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vendedor in vendedores %}
+                <tr>
+                    <td>{{ vendedor['nombre'] }}</td>
+                    <td>{{ vendedor['email'] }}</td>
+                    <td>
+                        <a href="{{ url_for('main.edit_vendedor', id=vendedor['_id']|str_id) }}" class="btn btn-edit">Editar</a>
+                        <form action="{{ url_for('main.delete_vendedor', id=vendedor['_id']|str_id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-delete" onclick="return confirm('¿Estás seguro de que quieres eliminar este vendedor?')">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

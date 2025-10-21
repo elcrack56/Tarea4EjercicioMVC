@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Ventas{% endblock %}
+
+{% block content %}
+    <div class="crud-container">
+        <h1>Ventas</h1>
+        <a href="{{ url_for('main.new_venta') }}" class="btn btn-success">Añadir Nueva Venta</a>
+        <table class="crud-table">
+            <thead>
+                <tr>
+                    <th>Vendedor</th>
+                    <th>Monto</th>
+                    <th>Fecha Venta</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for venta in ventas %}
+                <tr>
+                    <td>{{ venta['vendedor_nombre'] }}</td>
+                    <td>${{ "%.2f"|format(venta['monto']) }}</td>
+                    <td>{{ venta['fecha_venta'].strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <a href="{{ url_for('main.edit_venta', id=venta['_id']|str_id) }}" class="btn btn-edit">Editar</a>
+                        <form action="{{ url_for('main.delete_venta', id=venta['_id']|str_id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-delete" onclick="return confirm('¿Estás seguro de que quieres eliminar esta venta?')">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

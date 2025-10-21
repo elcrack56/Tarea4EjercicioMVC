@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}{% if venta %}Editar Venta{% else %}Añadir Venta{% endif %}{% endblock %}
+
+{% block content %}
+    <div class="crud-container">
+        <h1>{% if venta %}Editar Venta{% else %}Añadir Nueva Venta{% endif %}</h1>
+        <form action="{% if venta %}{{ url_for('main.edit_venta', id=venta['_id']|str_id) }}{% else %}{{ url_for('main.new_venta') }}{% endif %}" method="POST" class="crud-form">
+            <div class="form-group">
+                <label for="vendedor_id">Vendedor:</label>
+                <select id="vendedor_id" name="vendedor_id" required>
+                    <option value="">Selecciona un vendedor</option>
+                    {% for vendedor in vendedores %}
+                        <option value="{{ vendedor['_id']|str_id }}" {% if venta and venta['vendedor_id']|str_id == vendedor['_id']|str_id %}selected{% endif %}>{{ vendedor['nombre'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="monto">Monto:</label>
+                <input type="number" step="0.01" id="monto" name="monto" value="{{ venta['monto'] if venta else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="fecha_venta">Fecha Venta:</label>
+                <input type="date" id="fecha_venta" name="fecha_venta" value="{{ venta['fecha_venta_str'] if venta else '' }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">{% if venta %}Actualizar{% else %}Guardar{% endif %}</button>
+            <a href="{{ url_for('main.list_ventas') }}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+{% endblock %}
