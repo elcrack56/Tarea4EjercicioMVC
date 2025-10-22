@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
-from app import models
+from app import models 
+import math
 
 class ComisionesService:
     def __init__(self):
@@ -13,19 +14,23 @@ class ComisionesService:
         total_ventas = sum(venta['monto'] for venta in ventas_periodo)
         total_transacciones = len(ventas_periodo)
 
-        current_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        reglas_activas = models.get_active_reglas_comision(current_date)
+        todas_las_reglas = models.get_all_reglas_comision()
+
+        reglas_vigentes_en_periodo = [
+            regla for regla in todas_las_reglas
+            if (regla['fecha_inicio_vigencia'] <= fecha_fin and regla['fecha_fin_vigencia'] >= fecha_inicio)
+        ]
 
         porcentaje_comision_aplicado = 0.0
         comision_a_pagar = 0.0
         regla_aplicada_nombre = "Ninguna"
 
         if total_ventas > 0:
-            reglas_activas.sort(key=lambda r: r.get('umbral_ventas_min', 0), reverse=True)
+            reglas_vigentes_en_periodo.sort(key=lambda r: r.get('umbral_ventas_min', 0), reverse=True)
 
-            for regla in reglas_activas:
+            for regla in reglas_vigentes_en_periodo:
                 umbral_min = regla.get('umbral_ventas_min', 0)
-                umbral_max = regla.get('umbral_ventas_max', float('inf'))
+                umbral_max = regla.get('umbral_ventas_max', math.inf) 
                 porcentaje = regla.get('porcentaje', 0.0)
                 
                 if umbral_min <= total_ventas <= umbral_max:

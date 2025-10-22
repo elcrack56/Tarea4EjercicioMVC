@@ -10,7 +10,8 @@ def create_app():
     mongo.init_app(app)
 
     app.jinja_env.filters['str_id'] = lambda x: str(x) if isinstance(x, ObjectId) else x
-
+    app.jinja_env.filters['objectid'] = lambda x: ObjectId(x) if isinstance(x, str) else x
+    
     from . import routes
     app.register_blueprint(routes.bp)
 
