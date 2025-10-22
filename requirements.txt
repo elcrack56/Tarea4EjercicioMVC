@@ -1,4 +1,5 @@
-Flask Flask-PyMongo 
+Flask 
+Flask-PyMongo 
 python-dotenv 
 pymongo[srv]
 gunicorn    
